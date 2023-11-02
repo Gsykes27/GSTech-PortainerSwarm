@@ -1,0 +1,35 @@
+version: "3.8"
+
+# visite o canal GS Tech - https://www.youtube.com/@GS-Tech27
+
+services:
+  minio:
+    image: quay.io/minio/minio
+    command: server /data --console-address ":9001"
+    networks:
+      - traefik_public
+    volumes:
+      - minio_data:/data
+    environment:
+      MINIO_ROOT_USER: <USUARIO_AQUI>
+      MINIO_ROOT_PASSWORD: <SENHA_AQUI>
+      MINIO_BROWSER_REDIRECT_URL: https://console.SEU_DOMINIO.com.br
+      MINIO_SERVER_URL: https://s3.SEU_DOMINIO.com.br
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+          limits:
+            cpus: '0.2'
+            memory: 512M
+
+volumes:
+  minio_data:
+    external: true
+
+networks:
+  npm_public:
+    external: true

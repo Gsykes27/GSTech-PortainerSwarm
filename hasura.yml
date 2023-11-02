@@ -1,0 +1,32 @@
+version: '3.8'
+
+# visite o canal GS Tech - https://www.youtube.com/@GS-Tech27
+
+services:
+  graphql_engine:
+    image: hasura/graphql-engine:latest
+    ports:
+      - "8585:8080"
+    environment:
+      HASURA_GRAPHQL_DATABASE_URL: postgresql://postgres:[SENHA_AQUI]@[HOST]:5432/postgres
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
+      ## uncomment next line to set an admin secret
+      # HASURA_GRAPHQL_ADMIN_SECRET: myadminsecretkey
+    networks:
+	      - npm_public
+        - app_network 
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+networks:
+   npm_public:
+      external: true
+   app_network:
+      external: true

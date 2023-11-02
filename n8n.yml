@@ -1,0 +1,141 @@
+version: "3.8"
+
+# visite o canal GS Tech - https://www.youtube.com/@GS-Tech27
+
+services:
+  n8n_editor:
+    image: n8nio/n8n:latest
+    #command: start
+    environment:
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_PORT: 5432
+      DB_POSTGRESDB_HOST: postgres
+      DB_POSTGRESDB_DATABASE: n8n_fila
+      DB_POSTGRESDB_USER: postgres
+      DB_POSTGRESDB_PASSWORD: <SENHA_POSTGRES>
+      # criar chave https://acte.ltd/utils/randomkeygen
+      N8N_ENCRYPTION_KEY: <SUA_KEY>
+      # hosts e URL
+      N8N_HOST: n8n.seu_dominio.com.br
+      N8N_EDITOR_BASE_URL: https://n8n.seu_dominio.com.br/
+      N8N_PROTOCOL: https
+      NODE_ENV: production
+      # webhooks
+      WEBHOOK_URL: https://webhook.n8n.seu_dominio.com.br/
+      # modo de execuçao para fila
+      EXECUTIONS_MODE: queue
+      # redis
+      QUEUE_BULL_REDIS_HOST: redis
+      QUEUE_BULL_REDIS_PORT: 6379
+      QUEUE_BULL_REDIS_DB: 2
+      # bibliotecas utilizadas
+      NODE_FUNCTION_ALLOW_EXTERNAL: moment,lodash,moment-with-locales
+      EXECUTIONS_DATA_PRUNE: 'true'
+      EXECUTIONS_DATA_MAX_AGE: 336
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          cpus: '0.3'
+          memory: 512M
+    networks:
+      - npm_public
+      - app_network
+  
+  n8n_webhook:
+    image: n8nio/n8n:latest
+    command: webhook
+    environment:
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_PORT: 5432
+      DB_POSTGRESDB_HOST: postgres
+      DB_POSTGRESDB_DATABASE: n8n_fila
+      DB_POSTGRESDB_USER: postgres
+      DB_POSTGRESDB_PASSWORD: <SENHA_POSTGRES>
+      # criar chave https://acte.ltd/utils/randomkeygen
+      N8N_ENCRYPTION_KEY: <SUA_KEY>
+      # hosts e URL
+      N8N_HOST: n8n.seu_dominio.com.br
+      N8N_EDITOR_BASE_URL: https://n8n.seu_dominio.com.br/
+      N8N_PROTOCOL: https
+      NODE_ENV: production
+      # webhooks
+      WEBHOOK_URL: https://webhook.n8n.seu_dominio.com.br/
+      # modo de execuçao para fila
+      EXECUTIONS_MODE: queue
+      # redis
+      QUEUE_BULL_REDIS_HOST: redis
+      QUEUE_BULL_REDIS_PORT: 6379
+      QUEUE_BULL_REDIS_DB: 2
+      # bibliotecas utilizadas
+      NODE_FUNCTION_ALLOW_EXTERNAL: moment,lodash,moment-with-locales
+      EXECUTIONS_DATA_PRUNE: 'true'
+      EXECUTIONS_DATA_MAX_AGE: 336
+    deploy:
+      mode: replicated
+      # pode criar replicas
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 320M
+    networks:
+      - npm_public
+      - app_network
+  
+  n8n_worker:
+    image: n8nio/n8n:latest
+    command: worker --concurrency=3
+    environment:
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_PORT: 5432
+      DB_POSTGRESDB_HOST: postgres
+      DB_POSTGRESDB_DATABASE: n8n_fila
+      DB_POSTGRESDB_USER: postgres
+      DB_POSTGRESDB_PASSWORD: <SENHA_POSTGRES>
+      # criar chave https://acte.ltd/utils/randomkeygen
+      N8N_ENCRYPTION_KEY: <SUA_KEY>
+      # hosts e URL
+      N8N_HOST: n8n.seu_dominio.com.br
+      N8N_EDITOR_BASE_URL: https://n8n.seu_dominio.com.br/
+      N8N_PROTOCOL: https
+      NODE_ENV: production
+      # webhooks
+      WEBHOOK_URL: https://webhook.n8n.seu_dominio.com.br/
+      # modo de execuçao para fila
+      EXECUTIONS_MODE: queue
+      # redis
+      QUEUE_BULL_REDIS_HOST: redis
+      QUEUE_BULL_REDIS_PORT: 6379
+      QUEUE_BULL_REDIS_DB: 2
+      # bibliotecas utilizadas
+      NODE_FUNCTION_ALLOW_EXTERNAL: moment,lodash,moment-with-locales
+      EXECUTIONS_DATA_PRUNE: 'true'
+      EXECUTIONS_DATA_MAX_AGE: 336
+    deploy:
+      mode: replicated
+      # pode criar replicas
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 384M
+    networks:
+      - npm_public
+      - app_network
+
+networks:
+  npm_public:
+    external: true
+  app_network:
+    external: true

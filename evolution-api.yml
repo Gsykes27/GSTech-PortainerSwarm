@@ -1,0 +1,40 @@
+version: "3.8"
+
+# visite o canal GS Tech - https://www.youtube.com/@GS-Tech27
+
+services:
+  evolution_api:
+    image: davidsongomes/evolution-api:latest
+    ports:
+    - 8282:8080
+    command: ["node", "./dist/src/main.js"]
+    volumes:
+      - eapi_instances:/evolution/instances
+      - eapi_store:/evolution/store
+    environment:
+      SERVER_URL: https://api.seu_dominio.com.br
+      CONFIG_SESSION_PHONE_CLIENT: AprendaNaWeb
+      AUTHENTICATION_TYPE: apikey
+      AUTHENTICATION_API_KEY: <SUA_KEY_AQUI>
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.2"
+          memory: 100M
+      placement:
+        constraints:
+          - node.role == manager
+    networks:
+      - npm_public
+
+networks:
+  npm_public:
+    external: true
+
+volumes:
+  eapi_instances:
+    external: true
+  eapi_store:
+    external: true

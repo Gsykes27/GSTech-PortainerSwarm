@@ -1,0 +1,47 @@
+version: "3.8"
+
+# visite o canal GS Tech - https://www.youtube.com/@GS-Tech27
+
+services:
+  flowise:
+    image: flowiseai/flowise:latest
+    command: /bin/sh -c "sleep 3; flowise start"
+    volumes:
+      - flowise_database:/root/.flowise
+    networks:
+      - npm_public
+      - app_network
+    environment:
+      # dados do banco
+      DATABASE_TYPE: postgres
+      DATABASE_NAME: flowise
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: SUA_SENHA
+      # dados do user do flowise
+      FLOWISE_USERNAME: aprendanaweb
+      FLOWISE_PASSWORD: SUA_SENHA
+      FLOWISE_SECRETKEY_OVERWRITE: SUA_CHAVE_AQUI
+      DEBUG: "true"
+      LOG_LEVEL: debug
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1024M
+
+volumes:
+  flowise_database:
+    external: true
+
+networks:
+  npm_public:
+    external: true
+  app_network:
+    external: true
