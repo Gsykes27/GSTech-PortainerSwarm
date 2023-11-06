@@ -32,10 +32,10 @@ services:
         constraints: [ node.role == manager ]
 
 networks:
-  npm_public:
-    external: true
-    attachable: true
   agent_network:
+    driver: overlay
+    attachable: true
+  npm_public:
     external: true
 
 volumes:
